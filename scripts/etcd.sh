@@ -55,6 +55,14 @@ ETCD_OPS="
 --listen-client-urls=\${ETCD_LISTEN_CLIENT_URLS} \\
 --initial-advertise-peer-urls=\${ETCD_INITIAL_ADVERTISE_PEER_URLS} \\
 --initial-cluster=\${ETCD_INITIAL_CLUSTER} \\
+--initial-cluster-token=\${ETCD_INITIAL_CLUSTER_TOKEN} \\
+--initial-cluster-state=\${ETCD_INITIAL_CLUSTER_STATE} \\
+--trusted-ca-file=\${ETCD_CA_FILE} \\
+--cert-file=\${ETCD_CERT_FILE}    \\
+--key-file=\${ETCD_KEY_FILE} \\
+--peer-trusted-ca-file=\${ETCD_PEER_CA_FILE} \\
+--peer-cert-file=\${ETCD_PEER_CERT_FILE} \\
+--peer-key-file==\${ETCD_PEER_KEY_FILE} \\
 "
 
 cat <<EOF >/usr/lib/systemd/system/etcd.service
