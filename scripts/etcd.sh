@@ -6,6 +6,7 @@ mkdir -p ${etcd_data_dir}
 ETCD_NAME=${1:-"etcd-default"}
 ETCD_LISTEN_IP=${2:-"0.0.0.0"}
 ETCD_INITIAL_CLUSTER=${3:-}
+
 CERTS_DIR=/opt/kubernetes/certs
 
 cat <<EOF >/opt/kubernetes/cfg/etcd.conf
