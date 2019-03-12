@@ -32,7 +32,7 @@ KUBE_ALLOW_PRIV="--allow-privileged=true"
 
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=${SERVICE_CLUSTER_IP_RANGE}"
 
-KUBE_ENABLE_ADMISSION_PLUGINS="----enable-admission-plugins=${ENABLE_ADMISSION_PLUGINS}"
+KUBE_ENABLE_ADMISSION_PLUGINS="--enable-admission-plugins=${ENABLE_ADMISSION_PLUGINS}"
 
 KUBE_AUTHORIZATION_MODE="--authorization-mode=RBAC,Node"
 
