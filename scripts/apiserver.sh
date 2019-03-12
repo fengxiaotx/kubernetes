@@ -42,7 +42,7 @@ KUBE_TOKEN_AUTH_FILE="--token-auth-file=/opt/kubernetes/cfg/token.csv"
 
 KUBE_SERVICE_NODE_PORT_RANGE="--service-node-port-range=30000-50000"
 
-KUBE_API_CLIENT_CA_FILE="--client-ca-file=${CERTS_DIR}/cp.pem"
+KUBE_API_CLIENT_CA_FILE="--client-ca-file=${CERTS_DIR}/ca.pem"
 
 KUBE_API_TLS_CERT_FILE="--tls-cert-file=${CERTS_DIR}/kubernetes.pem}"
 
@@ -50,3 +50,41 @@ KUBE_API_TLS_PRIVATE_KEY_FILE="--tls-private-key-file=${CERTS_DIR}/kubernetes-ke
 
 KUBE_SERVICE_ACCOUNT_KEY_FILE="--service-account-key-file=${CERTS_DIR}/ca-key.pem"
 EOF
+
+
+KUBE_APISERVER_OPTS="   \${KUBE_LOGTOSTDERR}         \\
+                        \${KUBE_LOG_LEVEL}           \\
+                        \${KUBE_ETCD_SERVERS}        \\
+                        \${KUBE_ETCD_CAFILE}         \\
+                        \${KUBE_ETCD_CERTFILE}       \\
+                        \${KUBE_ETCD_KEYFILE}        \\
+                        \${KUBE_API_ADDRESS}         \\
+                        \${KUBE_API_PORT}            \\
+                        \${NODE_PORT}                \\
+                        \${KUBE_ADVERTISE_ADDR}      \\
+                        \${KUBE_ALLOW_PRIV}          \\
+                        \${KUBE_SERVICE_ADDRESSES}   \\
+                        \${KUBE_ADMISSION_CONTROL}   \\
+                        \${KUBE_API_CLIENT_CA_FILE}  \\
+                        \${KUBE_API_TLS_CERT_FILE}   \\
+                        \${KUBE_API_TLS_PRIVATE_KEY_FILE}"
+
+
+cat <<EOF >/usr/lib/systemd/system/kube-apiserver.service
+[Unit]
+Description=Kubernetes API Server
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+EnvironmentFile=-/opt/kubernetes/cfg/kube-apiserver
+ExecStart=/opt/kubernetes/bin/kube-apiserver ${KUBE_APISERVER_OPTS}
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable kube-apiserver
+systemctl restart kube-apiserver
+systemctl restart kube-apiserver
