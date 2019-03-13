@@ -20,15 +20,19 @@ cat <<EOF >/usr/lib/systemd/system/flannel.service
 [Unit]
 Description=Flanneld overlay address etcd agent
 After=network.target
+Before=docker.service
 
 [Service]
 EnvironmentFile=-/opt/kubernetes/cfg/flannel
+ExecStartPre=/opt/kubernetes/bin/remove-docker0.sh
 ExecStart=/opt/kubernetes/bin/flanneld --ip-masq \${FLANNEL_ETCD} \${FLANNEL_ETCD_KEY} \${FLANNEL_ETCD_CAFILE} \${FLANNEL_ETCD_CERTFILE} \${FLANNEL_ETCD_KEYFILE}
+ExecStartPost=/opt/kubernetes/bin/mk-docker-opts.sh -d /run/flannel/docker
 
 Type=notify
 
 [Install]
 WantedBy=multi-user.target
+RequiredBy=docker.service
 EOF
 
 # Store FLANNEL_NET to etcd.

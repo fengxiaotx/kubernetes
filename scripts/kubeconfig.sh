@@ -1,13 +1,7 @@
 #!/bin/bash
-#创建 TLS Bootstrapping Token
-KUBE_APISERVER=${1:-"https://0.0.0.0:6443"}
 
-BOOTSTRAP_TOKEN=$(head -c 16 /dev/urandom | od -An -t x | tr -d ' ')
-
-#生成token.csv文件
-cat > /opt/kubernetes/cfg/token.csv <<EOF
-${BOOTSTRAP_TOKEN},kubelet-bootstrap,10001,"system:kubelet-bootstrap"
-EOF
+BOOTSTRAP_TOKEN=${1:-}
+KUBE_APISERVER=${2:-"https://0.0.0.0:6443"}
 
 #创建 kubelet bootstrapping kubeconfig 文件
 # 设置集群参数
