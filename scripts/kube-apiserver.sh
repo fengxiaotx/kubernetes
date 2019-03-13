@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#apiserver 安装
 
 MASTER_ADDRESS=${1:-"8.8.8.18"}
 ETCD_SERVERS=${2:-"https://8.8.8.18:2379"}
@@ -6,6 +7,7 @@ SERVICE_CLUSTER_IP_RANGE=${3:-"10.254.0.0/24"}
 ENABLE_ADMISSION_PLUGINS=${4:-"NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota,NodeRestriction"}
 
 CERTS_DIR=/opt/kubernetes/certs
+CFG_DIR=/opt/kubernetes/cfg
 
 cat <<EOF >/opt/kubernetes/cfg/kube-apiserver
 KUBE_LOGTOSTDERR="--logtostderr=true"
@@ -38,7 +40,7 @@ KUBE_AUTHORIZATION_MODE="--authorization-mode=RBAC,Node"
 
 KUBE_ENABLE_BOOTSTRAP_TOKEN_AUTH="--enable-bootstrap-token-auth"
 
-KUBE_TOKEN_AUTH_FILE="--token-auth-file=/opt/kubernetes/cfg/token.csv"
+KUBE_TOKEN_AUTH_FILE="--token-auth-file=${CFG_DIR}/token.csv"
 
 KUBE_SERVICE_NODE_PORT_RANGE="--service-node-port-range=30000-50000"
 
@@ -64,10 +66,15 @@ KUBE_APISERVER_OPTS="   \${KUBE_LOGTOSTDERR}         \\
                         \${KUBE_ADVERTISE_ADDR}      \\
                         \${KUBE_ALLOW_PRIV}          \\
                         \${KUBE_SERVICE_ADDRESSES}   \\
-                        \${KUBE_ADMISSION_CONTROL}   \\
+                        \${KUBE_ENABLE_ADMISSION_PLUGINS} \\
+                        \${KUBE_AUTHORIZATION_MODE}  \\
+                        \${KUBE_ENABLE_BOOTSTRAP_TOKEN_AUTH} \\
+                        \${KUBE_TOKEN_AUTH_FILE}     \\
+                        \${KUBE_SERVICE_NODE_PORT_RANGE} \\
                         \${KUBE_API_CLIENT_CA_FILE}  \\
                         \${KUBE_API_TLS_CERT_FILE}   \\
-                        \${KUBE_API_TLS_PRIVATE_KEY_FILE}"
+                        \${KUBE_API_TLS_PRIVATE_KEY_FILE} \\
+                        \${KUBE_SERVICE_ACCOUNT_KEY_FILE}"
 
 
 cat <<EOF >/usr/lib/systemd/system/kube-apiserver.service
