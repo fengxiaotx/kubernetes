@@ -49,3 +49,4 @@ KUBE_APISERVER=${2:-"https://0.0.0.0:6443"}
 
 # 设置默认上下文
 /opt/kubernetes/bin/kubectl config use-context default --kubeconfig=/opt/kubernetes/cfg/kube-proxy.kubeconfig
+
