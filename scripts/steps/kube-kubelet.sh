@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-MASTER_ADDRESS=${1:-"8.8.8.18"}
-NODE_ADDRESS=${2:-"8.8.8.20"}
-DNS_SERVER_IP=${3:-"192.168.3.100"}
-DNS_DOMAIN=${4:-"cluster.local"}
+#MASTER_ADDRESS=${1:-"8.8.8.18"}
+NODE_ADDRESS=${1:-"8.8.8.20"}
+DNS_SERVER_IP=${2:-"10.254.0.2"}
+DNS_DOMAIN=${3:-"cluster.local"}
 
 CFG_DIR=/opt/kubernetes/cfg
 CERTS_DIR=/opt/kubernetes/certs
@@ -23,12 +23,27 @@ CERTS_DIR=/opt/kubernetes/certs
 # current-context: local
 # EOF
 
+cat <<EOF >/opt/kubernetes/cfg/kubelet.conf
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+address: ${NODE_ADDRESS}
+port: 10250
+readOnlyPort: 10255
+cgroupDriver: cgroupfs
+clusterDNS: ["${DNS_SERVER_IP}"]
+clusterDomain: cluster.local.
+failSwapOn: false
+authentication:
+  anonymous:
+    enabled: true
+EOF
+
 cat <<EOF >/opt/kubernetes/cfg/kubelet
 KUBE_LOGTOSTDERR="--logtostderr=true"
 
 KUBE_LOG_LEVEL="--v=4"
 
-NODE_ADDRESS="--address=${NODE_ADDRESS}"
+#NODE_ADDRESS="--address=${NODE_ADDRESS}"
 
 NODE_PORT="--port=10250"
 
@@ -42,8 +57,10 @@ BOOTSTRAP_KUBECONFIG="--bootstrap-kubeconfig=${CFG_DIR}/bootstrap.kubeconfig"
 KUBE_ALLOW_PRIV="--allow-privileged=false"
 
 # DNS info
-KUBELET_DNS_IP="--cluster-dns=${DNS_SERVER_IP}"
-KUBELET_DNS_DOMAIN="--cluster-domain=${DNS_DOMAIN}"
+#KUBELET_DNS_IP="--cluster-dns=${DNS_SERVER_IP}"
+#KUBELET_DNS_DOMAIN="--cluster-domain=${DNS_DOMAIN}"
+
+KUBELET_CONFIG="--config=/opt/kubernetes/cfg/kubelet.conf"
 
 KUBELET_CERT_DIR="--cert-dir=${CERTS_DIR}"
 KUBELET_POD_INFRA_CONTAINER_IMAGE="--pod-infra-container-image=registry.cn-shanghai.aliyuncs.com/moensun/pause-amd64:3.1"
@@ -54,14 +71,12 @@ EOF
 
 KUBELET_OPTS="      \${KUBE_LOGTOSTDERR}     \\
                     \${KUBE_LOG_LEVEL}       \\
-                    \${NODE_ADDRESS}         \\
                     \${NODE_PORT}            \\
                     \${NODE_HOSTNAME}        \\
                     \${KUBELET_KUBECONFIG}   \\
                     \${BOOTSTRAP_KUBECONFIG} \\
                     \${KUBE_ALLOW_PRIV}      \\
-                    \${KUBELET_DNS_IP}       \\
-                    \${KUBELET_DNS_DOMAIN}   \\
+                    \${KUBELET_CONFIG}       \\
                     \${KUBELET_CERT_DIR}     \\
                     \${KUBELET_POD_INFRA_CONTAINER_IMAGE} \\
                     \$KUBELET_ARGS"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-MASTER_ADDRESS=${1:-"8.8.8.18"}
-NODE_ADDRESS=${2:-"8.8.8.20"}
-CLUSTER_CIDR=${3:-"10.254.0.0/24"}
+#MASTER_ADDRESS=${1:-"8.8.8.18"}
+NODE_ADDRESS=${1:-"8.8.8.20"}
+CLUSTER_CIDR=${2:-"10.254.0.0/24"}
 
 CFG_DIR="/opt/kubernetes/cfg"
 
@@ -15,7 +15,7 @@ NODE_BIND_ADDRESS="--bind-address=${NODE_ADDRESS}"
 
 NODE_HOSTNAME="--hostname-override=${NODE_ADDRESS}"
 
-KUBE_MASTER="--master=http://${MASTER_ADDRESS}:8080"
+#KUBE_MASTER="--master=http://${MASTER_ADDRESS}:8080"
 
 KUBE_PROXY_OPTS="--kubeconfig=${CFG_DIR}/kube-proxy.kubeconfig --cluster-cidr=${CLUSTER_CIDR}"
 
@@ -25,7 +25,6 @@ KUBE_PROXY_OPTS="   \${KUBE_LOGTOSTDERR} \\
                     \${KUBE_LOG_LEVEL}   \\
                     \${NODE_BIND_ADDRESS}\\
                     \${NODE_HOSTNAME}    \\
-                    \${KUBE_MASTER}      \\
                     \${KUBE_PROXY_OPTS}"
 
 cat <<EOF >/usr/lib/systemd/system/kube-proxy.service
