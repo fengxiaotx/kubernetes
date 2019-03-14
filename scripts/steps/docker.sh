@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#docker 可以自己根据yaml 安装，然后在修改配置文件
+set -e
+
+KUBERNETE_BIN=/opt/kubernetes/bin
+wget -O ${KUBERNETE_BIN}/dockerd -c http://ms-source.oss-cn-shanghai.aliyuncs.com/sdk/docker/18.09.3/bin/dockerd
 
 DOCKER_OPTS=${1:-""}
 

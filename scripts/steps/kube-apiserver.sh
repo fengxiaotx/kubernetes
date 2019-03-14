@@ -16,11 +16,11 @@ KUBE_LOG_LEVEL="--v=4"
 
 KUBE_ETCD_SERVERS="--etcd-servers=${ETCD_SERVERS}"
 
-KUBE_ETCD_CAFILE="--etcd-cafile=/srv/kubernetes/etcd/ca.pem"
+KUBE_ETCD_CAFILE="--etcd-cafile=${CERTS_DIR}/ca.pem"
 
-KUBE_ETCD_CERTFILE="--etcd-certfile=/srv/kubernetes/etcd/client.pem"
+KUBE_ETCD_CERTFILE="--etcd-certfile=${CERTS_DIR}/kubernetes.pem"
 
-KUBE_ETCD_KEYFILE="--etcd-keyfile=/srv/kubernetes/etcd/client-key.pem"
+KUBE_ETCD_KEYFILE="--etcd-keyfile=${CERTS_DIR}/kubernetes-key.pem"
 
 KUBE_API_ADDRESS="--insecure-bind-address=0.0.0.0"
 
